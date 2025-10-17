@@ -1,28 +1,55 @@
+import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
+
 function DashboardPage() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Aquí puedes agregar lógica de limpieza (localStorage, etc.)
+    navigate('/');
+  };
+
+  const isActive = (path: string) => {
+    return location.pathname === path;
+  };
+
   return (
     <div className="dashboard-layout">
       <aside className="sidebar">
         <div className="sidebar-header"></div>
 
         <nav className="sidebar-nav">
-          <a href="#" className="nav-item active">
+          <Link 
+            to="/dashboard" 
+            className={`nav-item ${isActive('/dashboard') ? 'active' : ''}`}
+          >
             <span>Inicio</span>
-          </a>
-          <a href="#" className="nav-item">
+          </Link>
+          
+          <Link 
+            to="/dashboard/perfil" 
+            className={`nav-item ${isActive('/dashboard/perfil') ? 'active' : ''}`}
+          >
             <span>Perfil</span>
-          </a>
+          </Link>
 
           <div className="nav-section">
             <h4>MENÚ ESTUDIANTE</h4>
-            <a href="#" className="nav-item">
+            <Link 
+              to="/dashboard/mi-malla" 
+              className={`nav-item ${isActive('/dashboard/mi-malla') ? 'active' : ''}`}
+            >
               <span>Mi malla</span>
-            </a>
-            <a href="#" className="nav-item">
+            </Link>
+            <Link 
+              to="/dashboard/mis-proyecciones" 
+              className={`nav-item ${isActive('/dashboard/mis-proyecciones') ? 'active' : ''}`}
+            >
               <span>Mis proyecciones</span>
-            </a>
+            </Link>
           </div>
 
-          <button className="btn-logout">
+          <button className="btn-logout" onClick={handleLogout}>
             <span>Cerrar sesión</span>
           </button>
         </nav>
@@ -31,7 +58,9 @@ function DashboardPage() {
       <main className="main-content">
         <header className="top-header"></header>
 
-        <div className="content-area"></div>
+        <div className="content-area">
+          <Outlet />
+        </div>
       </main>
 
       <style>{`
