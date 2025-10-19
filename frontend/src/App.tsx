@@ -11,7 +11,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />}>
-          <Route index element={<DashboardHome />} />
+          <Route index element={<Navigate to="perfil" replace />} />
           <Route path="perfil" element={<Perfil />} />
           <Route path="mi-malla" element={<MiMalla />} />
           <Route path="mis-proyecciones" element={<MisProyecciones />} />
@@ -21,6 +21,5 @@ function App() {
     </BrowserRouter>
   );
 }
-
 
 export default App;
