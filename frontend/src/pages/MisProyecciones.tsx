@@ -1,5 +1,3 @@
-function MisProyecciones() {
-  return <div></div>;
+export default function MisProyecciones() {
+  return null;
 }
-
-export default MisProyecciones;

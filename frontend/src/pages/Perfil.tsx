@@ -1,5 +1,3 @@
-function Perfil() {
-  return <div></div>;
+export default function Perfil() {
+  return null;
 }
-
-export default Perfil;

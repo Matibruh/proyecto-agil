@@ -1,207 +1,195 @@
-import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { 
+  Box,
+  Typography,
+  Button,
+  AppBar,
+  Toolbar
+} from '@mui/material';
+import { LogOut } from 'lucide-react';
+import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 
-function DashboardPage() {
-  const location = useLocation();
+export default function Dashboard() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [activeMenu, setActiveMenu] = useState('inicio');
 
-  const handleLogout = () => {
-    // Aquí puedes agregar lógica de limpieza (localStorage, etc.)
-    navigate('/');
-  };
+  // Detectar la ruta actual y actualizar el menú activo
+  useEffect(() => {
+    const path = location.pathname;
+    if (path === '/dashboard') setActiveMenu('inicio');
+    else if (path === '/perfil') setActiveMenu('perfil');
+    else if (path === '/malla') setActiveMenu('malla');
+    else if (path === '/proyecciones') setActiveMenu('proyecciones');
+  }, [location]);
 
-  const isActive = (path: string) => {
-    return location.pathname === path;
+  const handleNavigation = (menu: string, route: string) => {
+    setActiveMenu(menu);
+    navigate(route);
   };
 
   return (
-    <div className="dashboard-layout">
-      <aside className="sidebar">
-        <div className="sidebar-header"></div>
+    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+      {/* Sidebar */}
+      <Box
+        sx={{
+          width: 224,
+          backgroundColor: '#4A7BA7',
+          color: 'white',
+          display: 'flex',
+          flexDirection: 'column',
+          position: 'fixed',
+          height: '100vh',
+          zIndex: 1200
+        }}
+      >
+        {/* Espaciador que calcula la altura del header (100px) */}
+        <Box sx={{ height: '100px' }} />
 
-        <nav className="sidebar-nav">
-          <Link 
-            to="/dashboard" 
-            className={`nav-item ${isActive('/dashboard') ? 'active' : ''}`}
+        {/* Menú unificado */}
+        <Box sx={{ px: 3, pt: 2 }}>
+          {/* Inicio */}
+          <Box
+            onClick={() => handleNavigation('inicio', '/dashboard')}
+            sx={{
+              py: 1.5,
+              cursor: 'pointer',
+              backgroundColor: activeMenu === 'inicio' ? 'rgba(255,255,255,0.1)' : 'transparent',
+              borderLeft: activeMenu === 'inicio' ? '4px solid #FF8A5B' : '4px solid transparent',
+              ml: -3,
+              pl: 3,
+              '&:hover': {
+                backgroundColor: 'rgba(255,255,255,0.05)',
+              },
+            }}
           >
-            <span>Inicio</span>
-          </Link>
-          
-          <Link 
-            to="/dashboard/perfil" 
-            className={`nav-item ${isActive('/dashboard/perfil') ? 'active' : ''}`}
+            <Typography sx={{ fontSize: '0.95rem', fontWeight: 500 }}>
+              Inicio
+            </Typography>
+          </Box>
+
+          {/* Perfil */}
+          <Box
+            onClick={() => handleNavigation('perfil', '/perfil')}
+            sx={{
+              py: 1.5,
+              cursor: 'pointer',
+              backgroundColor: activeMenu === 'perfil' ? 'rgba(255,255,255,0.1)' : 'transparent',
+              borderLeft: activeMenu === 'perfil' ? '4px solid #FF8A5B' : '4px solid transparent',
+              ml: -3,
+              pl: 3,
+              '&:hover': {
+                backgroundColor: 'rgba(255,255,255,0.05)',
+              },
+            }}
           >
-            <span>Perfil</span>
-          </Link>
+            <Typography sx={{ fontSize: '0.95rem', fontWeight: 500 }}>
+              Perfil
+            </Typography>
+          </Box>
 
-          <div className="nav-section">
-            <h4>MENÚ ESTUDIANTE</h4>
-            <Link 
-              to="/dashboard/mi-malla" 
-              className={`nav-item ${isActive('/dashboard/mi-malla') ? 'active' : ''}`}
-            >
-              <span>Mi malla</span>
-            </Link>
-            <Link 
-              to="/dashboard/mis-proyecciones" 
-              className={`nav-item ${isActive('/dashboard/mis-proyecciones') ? 'active' : ''}`}
-            >
-              <span>Mis proyecciones</span>
-            </Link>
-          </div>
+          {/* Mi malla */}
+          <Box
+            onClick={() => handleNavigation('malla', '/malla')}
+            sx={{
+              py: 1.5,
+              cursor: 'pointer',
+              backgroundColor: activeMenu === 'malla' ? 'rgba(255,255,255,0.1)' : 'transparent',
+              borderLeft: activeMenu === 'malla' ? '4px solid #FF8A5B' : '4px solid transparent',
+              ml: -3,
+              pl: 3,
+              '&:hover': {
+                backgroundColor: 'rgba(255,255,255,0.05)',
+              },
+            }}
+          >
+            <Typography sx={{ fontSize: '0.95rem', fontWeight: 500 }}>
+              Mi malla
+            </Typography>
+          </Box>
 
-          <button className="btn-logout" onClick={handleLogout}>
-            <span>Cerrar sesión</span>
-          </button>
-        </nav>
-      </aside>
+          {/* Mis proyecciones */}
+          <Box
+            onClick={() => handleNavigation('proyecciones', '/proyecciones')}
+            sx={{
+              py: 1.5,
+              cursor: 'pointer',
+              backgroundColor: activeMenu === 'proyecciones' ? 'rgba(255,255,255,0.1)' : 'transparent',
+              borderLeft: activeMenu === 'proyecciones' ? '4px solid #FF8A5B' : '4px solid transparent',
+              ml: -3,
+              pl: 3,
+              '&:hover': {
+                backgroundColor: 'rgba(255,255,255,0.05)',
+              },
+            }}
+          >
+            <Typography sx={{ fontSize: '0.95rem', fontWeight: 500 }}>
+              Mis proyecciones
+            </Typography>
+          </Box>
+        </Box>
 
-      <main className="main-content">
-        <header className="top-header"></header>
+        {/* Espaciador flexible */}
+        <Box sx={{ flexGrow: 1 }} />
 
-        <div className="content-area">
+        {/* Cerrar sesión */}
+        <Box sx={{ p: 2 }}>
+          <Button
+            fullWidth
+            startIcon={<LogOut size={18} />}
+            onClick={() => navigate('/login')}
+            sx={{
+              backgroundColor: '#FF8A5B',
+              color: 'white',
+              textTransform: 'none',
+              py: 1.2,
+              borderRadius: 2,
+              fontSize: '0.9rem',
+              fontWeight: 500,
+              '&:hover': {
+                backgroundColor: '#FF7043',
+              },
+            }}
+          >
+            Cerrar sesión
+          </Button>
+        </Box>
+      </Box>
+
+      {/* Main Content */}
+      <Box
+        sx={{
+          flexGrow: 1,
+          marginLeft: '224px',
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: '100vh'
+        }}
+      >
+        {/* Top Bar con degradado */}
+        <AppBar 
+          position="static" 
+          elevation={0}
+          sx={{ 
+            background: 'linear-gradient(135deg, #5B99C2 0%, #7AB8E8 100%)',
+            height: 100
+          }}
+        >
+          <Toolbar sx={{ height: '100%' }}>
+            {/* VACÍO */}
+          </Toolbar>
+        </AppBar>
+
+        {/* Contenido Principal - Aquí se cargan las otras páginas */}
+        <Box 
+          sx={{ 
+            flexGrow: 1,
+            backgroundColor: '#F5F5F5'
+          }}
+        >
           <Outlet />
-        </div>
-      </main>
-
-      <style>{`
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-        }
-
-        .dashboard-layout {
-          display: flex;
-          min-height: 100vh;
-          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        .sidebar {
-          width: 280px;
-          background: linear-gradient(180deg, #1e3a5f 0%, #2d5a8a 100%);
-          color: white;
-          display: flex;
-          flex-direction: column;
-          box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .sidebar-header {
-          padding: 20px;
-          min-height: 60px;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .sidebar-nav {
-          flex: 1;
-          padding: 20px 0;
-          display: flex;
-          flex-direction: column;
-        }
-
-        .nav-section {
-          margin-top: 20px;
-        }
-
-        .nav-section h4 {
-          font-size: 11px;
-          font-weight: 600;
-          color: rgba(255, 255, 255, 0.6);
-          padding: 10px 20px 5px;
-          letter-spacing: 0.5px;
-        }
-
-        .nav-item {
-          display: flex;
-          align-items: center;
-          padding: 12px 20px;
-          color: rgba(255, 255, 255, 0.9);
-          text-decoration: none;
-          transition: all 0.3s ease;
-          font-size: 14px;
-        }
-
-        .nav-item:hover {
-          background: rgba(255, 255, 255, 0.1);
-          padding-left: 25px;
-        }
-
-        .nav-item.active {
-          background: rgba(255, 255, 255, 0.15);
-          border-left: 4px solid #ff8c42;
-          font-weight: 600;
-        }
-
-        .btn-logout {
-          margin: 20px;
-          padding: 12px;
-          background: #ff6b35;
-          color: white;
-          border: none;
-          border-radius: 8px;
-          font-size: 14px;
-          font-weight: 600;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: all 0.3s ease;
-        }
-
-        .btn-logout:hover {
-          background: #ff5722;
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
-        }
-
-        .main-content {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          background: #f5f5f5;
-        }
-
-        .top-header {
-          background: linear-gradient(135deg, #2d8fb8 0%, #1e7a9e 100%);
-          padding: 15px 30px;
-          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-          min-height: 80px;
-        }
-
-        .content-area {
-          flex: 1;
-          padding: 40px;
-          max-width: 1200px;
-          margin: 0 auto;
-          width: 100%;
-        }
-
-        @media (max-width: 768px) {
-          .sidebar {
-            width: 70px;
-          }
-
-          .nav-section h4,
-          .nav-item span,
-          .btn-logout span {
-            display: none;
-          }
-
-          .nav-item {
-            justify-content: center;
-          }
-
-          .btn-logout {
-            margin: 10px;
-            padding: 10px;
-          }
-
-          .content-area {
-            padding: 20px;
-          }
-        }
-      `}</style>
-    </div>
+        </Box>
+      </Box>
+    </Box>
   );
 }
-
-export default DashboardPage;

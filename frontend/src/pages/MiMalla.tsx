@@ -1,5 +1,3 @@
-function MiMalla() {
-  return <div></div>;
+export default function MiMalla() {
+  return null;
 }
-
-export default MiMalla;
