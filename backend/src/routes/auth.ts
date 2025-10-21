@@ -22,39 +22,39 @@ router.post("/login", async (req,res) => {
         const response = await fetch(fullUrl, {
             method: "GET",
             redirect: "follow",
-            // Puedes mantener los headers opcionales para mayor compatibilidad
+            
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
                 'Accept': 'application/json'
             }
         });
 
-        // 1. Siempre leer como texto para evitar el error '<'
+       
         const rawData = await response.text(); 
         let data: any;
 
         try {
-            // 2. Intentar parsear el JSON
+          
             data = JSON.parse(rawData);
         } catch (jsonError) {
-            // 3. Falló el JSON. No es un error crítico si es un 401 que devolvió HTML
+           
             console.error("Respuesta no parseable (HTML o texto) del servicio externo.");
             
-            // Si el código de respuesta no fue 200-299, asumimos error de credenciales
+        
             if (!response.ok || rawData.includes("<!doctype html>")) {
                  return res.status(401).json({
                     message: "Credenciales inválidas. El servicio de autenticación devolvió un error de formato.",
-                    // Mostramos un fragmento del error HTML si existe
+                   
                     error: rawData.substring(0, 100).trim() + '...' 
                 });
             }
-            // Si no fue error, pero el formato no es JSON, es un problema de la API.
+           
             throw new Error("El servicio externo devolvió un formato inesperado.");
         }
         
-        // 4. Lógica para manejar el JSON ya parseado (EXITO o ERROR interno)
+       
         if (data.error) {
-            // Credenciales incorrectas, reportado en formato JSON por el servicio
+           
             return res.status(401).json({
                 message: "Credenciales invalidas",
                 error: data.error
@@ -62,7 +62,7 @@ router.post("/login", async (req,res) => {
         }
 
         // 5. Login Exitoso
-        const { rut, carreras } = data; // ✅ Ya corregimos a 'carreras'
+        const { rut, carreras } = data; // ✅
         const token = generateToken({ rut });
 
         res.cookie("auth", token, {
