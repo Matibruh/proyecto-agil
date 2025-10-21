@@ -3,6 +3,7 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import path from 'path';
 import auth from './routes/auth';
+import carrers from './routes/carrers';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -21,6 +22,9 @@ app.use(express.static(path.join(__dirname, '../public')));
 
 app.use("/auth", auth);
 
+app.use("/carrers", carrers);
+
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:3000`);
 });
+
