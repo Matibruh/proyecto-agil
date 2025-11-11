@@ -62,7 +62,7 @@ router.post("/login", async (req,res) => {
         }
 
         // 5. Login Exitoso
-        const { rut, carreras } = data; // ✅
+        const { rut, carreras } = data; 
         const token = generateToken({ rut });
 
         res.cookie("auth", token, {
