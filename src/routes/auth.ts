@@ -3,6 +3,7 @@ import { pool } from "../utils/db";
 import bcrypt from 'bcrypt';
 import { generateToken } from "../utils/jwt";
 import { error } from "console";
+import { protect } from '../middleware/auth.middleware';
 
 const router = express.Router();
 const LOGIN_URL = "https://puclaro.ucn.cl/eross/avance/login.php";
@@ -87,4 +88,5 @@ router.post("/login", async (req,res) => {
     }
 
 });
+
 export default router;
