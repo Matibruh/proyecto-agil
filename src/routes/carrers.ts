@@ -41,4 +41,27 @@ router.get('/projection/:codCarrera/:catalogo', protect, async (req: Request, re
     }
 });
 
+router.get('/malla/:codCarrera/:catalogo', protect, async (req: Request, res: Response) => {
+  const { codCarrera, catalogo } = req.params;
+
+  try {
+    // Llamamos a la función que obtiene la malla desde la API externa
+    const malla = await fetchMalla(codCarrera, catalogo);
+
+    res.json({
+      message: 'Malla curricular obtenida con éxito.',
+      carrera: `${codCarrera}-${catalogo}`,
+      totalAsignaturas: malla.length,
+      malla: malla
+    });
+  } catch (error) {
+    console.error('Error al obtener malla:', error);
+    res.status(503).json({
+      message: 'Error al obtener la malla curricular.',
+      details: error instanceof Error ? error.message : 'Error desconocido.'
+    });
+  }
+});
+
+
 export default router;
