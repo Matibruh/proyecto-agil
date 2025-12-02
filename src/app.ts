@@ -6,7 +6,10 @@ import path from 'path';
 import auth from './routes/auth';
 import malla from "./routes/malla";
 import carrers from "./routes/carrers";
+<<<<<<< HEAD
 
+=======
+>>>>>>> ce28fe5bc6e5001d66a56fbd1e3d122b4e318fbd
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -23,7 +26,10 @@ app.use(cors({
 app.use(express.static(path.join(__dirname, '../public')));
 
 app.use("/auth", auth);
+<<<<<<< HEAD
 app.use("/carrers", malla);
+=======
+>>>>>>> ce28fe5bc6e5001d66a56fbd1e3d122b4e318fbd
 app.use("/carrers", carrers);
 
 
