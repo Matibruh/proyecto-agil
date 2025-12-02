@@ -112,7 +112,7 @@ export function generarProyeccionAutomatica(
       const creditosRamo = ramo.creditos;
       const esReprobado = (cursosReprobados[ramo.codigo] || 0) > 0;
 
-      // ❗ Regla: si tiene 2 reprobados, puede tomar máximo 3 ramos
+      //  Regla: si tiene 2 reprobados, puede tomar máximo 3 ramos
       if (ramosReprobadosSemestre >= 2 && ramosSemestre >= 3) break;
 
       if (creditos + creditosRamo > MAX_CREDITOS_POR_SEMESTRE) continue;
