@@ -66,23 +66,40 @@ export function generarProyeccionAutomatica(
   const cursosAprobados = new Set<string>();
   const cursosReprobados: Record<string, number> = {};
 
+  
+  const mallaPorCodigo = new Map<string, AsignaturaMalla>();
+  malla.forEach((a) => mallaPorCodigo.set(a.codigo, a));
+
+  let nivelMaxAprobado = 0;
+
   avance.forEach((curso) => {
     const codigo = curso.course?.trim();
     if (!codigo) return;
 
-    if (curso.status === "APROBADO") cursosAprobados.add(codigo);
-    if (curso.status === "REPROBADO")
+    if (curso.status === "APROBADO") {
+      cursosAprobados.add(codigo);
+      const asig = mallaPorCodigo.get(codigo);
+      if (asig && asig.nivel > nivelMaxAprobado) {
+        nivelMaxAprobado = asig.nivel;
+      }
+    }
+
+    if (curso.status === "REPROBADO") {
       cursosReprobados[codigo] = (cursosReprobados[codigo] || 0) + 1;
+    }
   });
 
+  //  Semestre "real" desde donde empieza la proyección
+  const baseSemestre = (nivelMaxAprobado || 0) + 1;
+
   const resultado: CursoProyectado[] = [];
-  let semestre = 1;
+  let semestreRelativo = 1; // 1,2,3,... (interno del algoritmo)
 
   // --- 3.1 Generar semestres normales (sin Capstone) ---
-  while (semestre <= MAX_SEMESTRES) {
+  while (semestreRelativo <= MAX_SEMESTRES) {
     const disponibles = malla
       .filter((a) => {
-        if (a.codigo === CAPSTONE_CODE) return false; // Capstone se agrega después
+        if (a.codigo === CAPSTONE_CODE) return false; 
         if (cursosAprobados.has(a.codigo)) return false;
         if (!a.prereq) return true;
 
@@ -117,7 +134,10 @@ export function generarProyeccionAutomatica(
 
       if (creditos + creditosRamo > MAX_CREDITOS_POR_SEMESTRE) continue;
 
-      resultado.push({ ...ramo, semestreSugerido: semestre });
+      resultado.push({
+        ...ramo,
+        semestreSugerido: baseSemestre + semestreRelativo - 1, // 👈 ajuste aquí
+      });
 
       creditos += creditosRamo;
       ramosSemestre++;
@@ -129,7 +149,7 @@ export function generarProyeccionAutomatica(
 
     if (!seTomoAlgo) break;
 
-    semestre++;
+    semestreRelativo++;
   }
 
   // --- 3.2 Agregar Capstone como semestre final ---
@@ -141,7 +161,7 @@ export function generarProyeccionAutomatica(
       resultado.reduce(
         (max, r) => Math.max(max, r.semestreSugerido),
         0
-      ) || 1;
+      ) || baseSemestre;
 
     resultado.push({
       ...capstone,
@@ -149,7 +169,7 @@ export function generarProyeccionAutomatica(
     });
   }
 
-  // --- 3.3 REBALANCE: asegurar mínimo 3 ramos por semestre ---
+  // --- 3.3 REBALANCE: asegurar mínimo 3 ramos por semestre (excepto Capstone solo) ---
   const porSemestre: Record<number, CursoProyectado[]> = {};
 
   for (const curso of resultado) {
@@ -161,29 +181,35 @@ export function generarProyeccionAutomatica(
     .map(Number)
     .sort((a, b) => a - b);
 
-  // Rebajar semestres con <3 tomando desde semestres con >3
-  for (let i = semestresOrdenados.length - 2; i >= 1; i--) {
+  // Mover ramos de semestres muy cargados a los que tengan <3
+  for (let i = 0; i < semestresOrdenados.length - 1; i++) {
     const semActual = semestresOrdenados[i];
     const semSiguiente = semestresOrdenados[i + 1];
 
-    if (!porSemestre[semActual] || !porSemestre[semSiguiente]) continue;
+    const listaActual = porSemestre[semActual];
+    const listaSiguiente = porSemestre[semSiguiente];
 
-    while (
-      porSemestre[semActual].length < 3 &&
-      porSemestre[semActual + 1] &&
-      porSemestre[semActual + 1].length > 3
-    ) {
-      const mover = porSemestre[semActual + 1].pop();
+    if (!listaActual || !listaSiguiente) continue;
+
+    
+    const esCapstoneSolo =
+      listaSiguiente.length === 1 && listaSiguiente[0].codigo === CAPSTONE_CODE;
+    if (esCapstoneSolo) continue;
+
+    while (listaActual.length < 3 && listaSiguiente.length > 3) {
+      const mover = listaSiguiente.shift(); // saca uno del semestre siguiente
       if (!mover) break;
 
       mover.semestreSugerido = semActual;
-      porSemestre[semActual].push(mover);
+      listaActual.push(mover);
     }
   }
 
   // reconstruir resultado plano
   const final: CursoProyectado[] = [];
-  for (const sem of Object.keys(porSemestre).map(Number).sort((a, b) => a - b)) {
+  for (const sem of Object.keys(porSemestre)
+    .map(Number)
+    .sort((a, b) => a - b)) {
     final.push(...porSemestre[sem]);
   }
 
