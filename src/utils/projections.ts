@@ -136,7 +136,7 @@ export function generarProyeccionAutomatica(
 
       resultado.push({
         ...ramo,
-        semestreSugerido: baseSemestre + semestreRelativo - 1, // 👈 ajuste aquí
+        semestreSugerido: baseSemestre + semestreRelativo - 1, //  ajuste aquí
       });
 
       creditos += creditosRamo;
