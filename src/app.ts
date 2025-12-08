@@ -4,8 +4,8 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import path from "path";
 
-import auth from "./routes/auth";
-import malla from "./routes/malla";
+import auth from "./resources/auth/auth.routes";
+import malla from "./resources/miMalla/miMalla.routes";
 import carrers from "./routes/carrers";
 
 const app = express();
@@ -29,7 +29,7 @@ app.use(express.static(path.join(__dirname, "../public")));
 
 
 app.use("/auth", auth);
-app.use("/carrers", malla);    
+app.use("/miMalla", malla);    
 app.use("/carrers", carrers);  
 
 

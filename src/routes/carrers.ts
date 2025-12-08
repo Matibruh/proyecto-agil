@@ -23,7 +23,7 @@ router.get('/projection/:codCarrera/:catalogo', protect, async (req: Request, re
         ]);
         //logica proyeccion
 
-        const asignaturasDisponibles = calcularCursosDisponibles(malla, avance); 
+        const asignaturasDisponibles = calcularCursosDisponibles(malla as any, avance); 
         
         // respuesta proyeccion :p
         res.json({ 
@@ -43,53 +43,6 @@ router.get('/projection/:codCarrera/:catalogo', protect, async (req: Request, re
     }
 });
 
-
-router.get('/malla/:codCarrera/:catalogo', protect, async (req: Request, res: Response) => {
-  const rutEstudiante = req.user?.rut;
-  const { codCarrera, catalogo } = req.params;
-
-  if(!rutEstudiante) {
-    return res.status(500).json({
-      message: "Error: no se pudo obtener el rut del estudiante",
-    });
-  }
-
-  try {
-    // Se llama la malla y avance en paralelo
-    const [malla,avance] = await Promise.all([
-      fetchMalla(codCarrera,catalogo),
-      fetchAvance(rutEstudiante,codCarrera)
-    ]);
-
-    const estadoAsignaturas = new Map<String, string>();
-    avance.forEach((a:any) =>{
-      estadoAsignaturas.set(a.course, a.status);
-    });
-
-    const mallaConEstado = malla.map((curso: any) => {
-      const estado = estadoAsignaturas.get(curso.codigo) || 'PENDIENTE';
-      return{
-        curso,estado, color: estado == 'APROBADO' ? 'green' : estado === 'REPROBADO' ? 'red' : 'gray'
-      };
-    });
-
-    res.json({
-      message: 'Malla y avance obtenidos con éxito.',
-      carrera: `${codCarrera}-${catalogo}`,
-      rut: rutEstudiante,
-      totalAsignaturas: malla.length,
-      malla: mallaConEstado
-    } );
-    
-  } catch (error){
-    console.error('Error al obtener malla o avance:', error);
-    res.status(503).json({
-      message: 'Error al obtener la malla curricular o el avance académico.',
-      details: error instanceof Error ? error.message : 'Error desconocido.'
-  });
-  }
-});
-
 router.get('/projection/auto/:codCarrera/:catalogo', protect, async (req: Request, res: Response) => {
   const rutEstudiante = req.user?.rut;
   const { codCarrera, catalogo } = req.params;
@@ -106,7 +59,7 @@ router.get('/projection/auto/:codCarrera/:catalogo', protect, async (req: Reques
       fetchAvance(rutEstudiante, codCarrera)
     ]);
 
-    const proyeccion = generarProyeccionAutomatica(malla, avance);
+    const proyeccion = generarProyeccionAutomatica(malla as any, avance);
 
     res.json({
       message: "Proyección semestral automática generada con éxito.",
@@ -123,7 +76,5 @@ router.get('/projection/auto/:codCarrera/:catalogo', protect, async (req: Reques
     });
   }
 });
-
-
 
 export default router;

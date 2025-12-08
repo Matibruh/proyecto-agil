@@ -1,9 +1,9 @@
 import express  from "express";
-import { pool } from "../utils/db";
+import { pool } from "../../utils/db";
 import bcrypt from 'bcrypt';
-import { generateToken } from "../utils/jwt";
+import { generateToken } from "../../utils/jwt";
 import { error } from "console";
-import { protect } from '../middleware/auth.middleware';
+import { protect } from '../../middleware/auth.middleware';
 
 const router = express.Router();
 const LOGIN_URL = "https://puclaro.ucn.cl/eross/avance/login.php";

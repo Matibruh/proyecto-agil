@@ -1,9 +1,28 @@
+
 const HAWAII_AUTH_HEADER = 'jf400fejof13f'; 
 
 const MALLA_URL_BASE = 'https://losvilos.ucn.cl/hawaii/api/mallas';
 const AVANCE_URL_BASE = 'https://puclaro.ucn.cl/eross/avance/avance.php';
 
-export async function fetchMalla(codCarrera: string, catalogo: string): Promise<any> {
+export interface Asignatura {
+    codigo: string,
+    asignatura: string,
+    creditos: number,
+    nivel: number,
+    prereq: string
+}
+
+export interface AsignaturaAvance {
+    nrc: string,
+    period: string,
+    student: string,
+    course: string,
+    excluded: boolean,
+    inscriptionType: string,
+    status: string
+}
+
+export async function fetchMalla(codCarrera: string, catalogo: string): Promise<Asignatura[]> {
     const url = `${MALLA_URL_BASE}?${codCarrera}-${catalogo}`;
     
     try {
@@ -25,7 +44,7 @@ export async function fetchMalla(codCarrera: string, catalogo: string): Promise<
 
 //avance academico//
 
-export async function fetchAvance(rut: string, codCarrera: string): Promise<any> {
+export async function fetchAvance(rut: string, codCarrera: string): Promise<AsignaturaAvance[]> {
     const url = `${AVANCE_URL_BASE}?rut=${rut}&codcarrera=${codCarrera}`;
     
     try {
