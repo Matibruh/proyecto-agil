@@ -18,6 +18,7 @@ router.get("/:codigoCarrera/:catalogo/", protect, async (req, res) => {
         res.json(await miMallaService.obtenerMiMalla(codigoCarrera, catalogo, rut))
     } catch (error) {
         res.sendStatus(500)
+        console.log(error);
     }
 });
 
