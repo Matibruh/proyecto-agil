@@ -5,7 +5,7 @@ import { ProjectionsService } from "./projection.service";
 const router = express.Router();
 const projectionService = new ProjectionsService();
 
-router.get("/:codCarrera/:catalogo", protect, async (req, res) => {
+router.get("automatica/:codCarrera/:catalogo", protect, async (req, res) => {
     const rut = req.user?.rut; 
 
     if (!rut) {
@@ -17,6 +17,7 @@ router.get("/:codCarrera/:catalogo", protect, async (req, res) => {
         res.json(await projectionService.generarProyeccionAutomatica(codigoCarrera, catalogo, rut))
     } catch (error) {
         res.sendStatus(500)
+        console.log(error);
     }
 
 });
