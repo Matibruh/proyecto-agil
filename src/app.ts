@@ -6,7 +6,7 @@ import path from "path";
 
 import auth from "./resources/auth/auth.routes";
 import malla from "./resources/miMalla/miMalla.routes";
-import carrers from "./routes/carrers";
+import projection from "./resources/projections/projection.routes";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -30,7 +30,7 @@ app.use(express.static(path.join(__dirname, "../public")));
 
 app.use("/auth", auth);
 app.use("/miMalla", malla);    
-app.use("/carrers", carrers);  
+app.use("/projection", projection); 
 
 
 app.listen(PORT, () => {

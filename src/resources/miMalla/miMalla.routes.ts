@@ -1,18 +1,24 @@
 
 import express  from "express";
 import { MiMallaService } from "./miMalla.service";
+import { protect } from "../../middleware/auth.middleware"
 
 const router = express.Router();
 const miMallaService = new MiMallaService()
 
-router.get("/:codigoCarrera/:catalogo/:rut", async (req, res) => {
+router.get("/:codigoCarrera/:catalogo/", protect, async (req, res) => {
+    const rut = req.user?.rut; 
+
+    if (!rut) {
+        return res.status(500).json({ message: "Error interno: Identificación del estudiante no disponible en el token." });
+    }
+
     try {
-        const { codigoCarrera, catalogo, rut } = req.params
-        console.log(codigoCarrera, catalogo, rut)
+        const { codigoCarrera, catalogo } = req.params
         res.json(await miMallaService.obtenerMiMalla(codigoCarrera, catalogo, rut))
     } catch (error) {
         res.sendStatus(500)
     }
-})
+});
 
 export default router;
