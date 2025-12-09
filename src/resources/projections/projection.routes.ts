@@ -14,7 +14,7 @@ router.get("automatica/:codCarrera/:catalogo", protect, async (req, res) => {
 
     try {
         const { codigoCarrera, catalogo } = req.params
-        res.json(await projectionService.generarProyeccionAutomatica(codigoCarrera, catalogo, rut))
+        res.json(await projectionService.generarProyeccionTotal(codigoCarrera, catalogo, rut))
     } catch (error) {
         res.sendStatus(500)
         console.log(error);
